@@ -49,6 +49,61 @@ lib_deps =
   - `examples/EnglishCommand/EnglishCommand.ino`
   - `examples/HiStackChanWakeUpWord/HiStackChanWakeUpWord.ino`
 
+## 実装方法
+
+`examples` と同じ実装フローは以下です。
+
+1. `M5Unified` と `ESP_SR_M5Unified` を include
+2. `M5.Mic` を 16kHz で初期化
+3. `ESP_SR_M5.onEvent(...)` でイベントコールバックを登録
+4. `ESP_SR_M5.begin(...)` で開始
+   - WakeWordのみ: `ESP_SR_M5.begin(nullptr, 0, SR_MODE_WAKEWORD, SR_CHANNELS_MONO)`
+   - WakeWord + Command: `sr_cmd_t` 配列を渡して開始
+5. `loop()` で `M5.Mic.record(...)` の結果を `ESP_SR_M5.feedAudio(...)` に渡し続ける
+6. コールバックで `SR_EVENT_WAKEWORD` / `SR_EVENT_COMMAND` / `SR_EVENT_TIMEOUT` を処理し、必要に応じて `ESP_SR_M5.setMode(...)` でモードを切り替える
+
+最小構成（WakeWordのみ）の例:
+
+```cpp
+#include <M5Unified.h>
+#include <ESP_SR_M5Unified.h>
+
+void onSrEvent(sr_event_t event, int command_id, int phrase_id) {
+  (void)command_id;
+  (void)phrase_id;
+  if (event == SR_EVENT_WAKEWORD) {
+    ESP_SR_M5.setMode(SR_MODE_WAKEWORD);
+  }
+}
+
+void setup() {
+  auto cfg = M5.config();
+  M5.begin(cfg);
+
+  auto mic_cfg = M5.Mic.config();
+  mic_cfg.sample_rate = 16000;
+  mic_cfg.stereo = false;
+  M5.Mic.config(mic_cfg);
+  M5.Mic.begin();
+
+  ESP_SR_M5.onEvent(onSrEvent);
+  ESP_SR_M5.begin(nullptr, 0, SR_MODE_WAKEWORD, SR_CHANNELS_MONO);
+}
+
+void loop() {
+  M5.update();
+  static int16_t audio_buf[256];
+  if (M5.Mic.record(audio_buf, 256, 16000, false)) {
+    ESP_SR_M5.feedAudio(audio_buf, 256);
+  }
+}
+```
+
+詳しくは以下を参照してください。
+
+- WakeWordのみ: `examples/HiStackChanWakeUpWord/HiStackChanWakeUpWord.ino`
+- WakeWord + Command: `examples/EnglishCommand/EnglishCommand.ino`
+
 ## srmodels.bin
 
 ESP-SR モデルは `srmodels.bin` を使用します。

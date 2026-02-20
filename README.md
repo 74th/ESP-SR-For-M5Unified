@@ -53,6 +53,61 @@ lib_deps =
   - `examples/EnglishCommand/EnglishCommand.ino`
   - `examples/HiStackChanWakeUpWord/HiStackChanWakeUpWord.ino`
 
+## Implementation Guide
+
+The implementation flow used in `examples` is:
+
+1. Include `M5Unified` and `ESP_SR_M5Unified`.
+2. Initialize `M5.Mic` at 16kHz.
+3. Register an event callback with `ESP_SR_M5.onEvent(...)`.
+4. Start recognition with `ESP_SR_M5.begin(...)`.
+   - Wake-word only: `ESP_SR_M5.begin(nullptr, 0, SR_MODE_WAKEWORD, SR_CHANNELS_MONO)`
+   - Wake-word + command: pass a `sr_cmd_t` array
+5. In `loop()`, continuously pass microphone samples from `M5.Mic.record(...)` to `ESP_SR_M5.feedAudio(...)`.
+6. In the callback, handle `SR_EVENT_WAKEWORD` / `SR_EVENT_COMMAND` / `SR_EVENT_TIMEOUT` and switch modes with `ESP_SR_M5.setMode(...)` when needed.
+
+Minimal wake-word-only example:
+
+```cpp
+#include <M5Unified.h>
+#include <ESP_SR_M5Unified.h>
+
+void onSrEvent(sr_event_t event, int command_id, int phrase_id) {
+  (void)command_id;
+  (void)phrase_id;
+  if (event == SR_EVENT_WAKEWORD) {
+    ESP_SR_M5.setMode(SR_MODE_WAKEWORD);
+  }
+}
+
+void setup() {
+  auto cfg = M5.config();
+  M5.begin(cfg);
+
+  auto mic_cfg = M5.Mic.config();
+  mic_cfg.sample_rate = 16000;
+  mic_cfg.stereo = false;
+  M5.Mic.config(mic_cfg);
+  M5.Mic.begin();
+
+  ESP_SR_M5.onEvent(onSrEvent);
+  ESP_SR_M5.begin(nullptr, 0, SR_MODE_WAKEWORD, SR_CHANNELS_MONO);
+}
+
+void loop() {
+  M5.update();
+  static int16_t audio_buf[256];
+  if (M5.Mic.record(audio_buf, 256, 16000, false)) {
+    ESP_SR_M5.feedAudio(audio_buf, 256);
+  }
+}
+```
+
+See these examples for full implementations:
+
+- Wake-word only: `examples/HiStackChanWakeUpWord/HiStackChanWakeUpWord.ino`
+- Wake-word + command: `examples/EnglishCommand/EnglishCommand.ino`
+
 ## srmodels.bin
 
 ESP-SR uses `srmodels.bin`.
