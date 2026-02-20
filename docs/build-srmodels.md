@@ -1,28 +1,30 @@
-# srmodels.bin の作り方
+# How to build srmodels.bin
 
-このドキュメントは、以下の調査メモを元に整理したものです。
+Japanese documentation: [`build-srmodels_ja.md`](build-srmodels_ja.md)
+
+This document is based on the following investigation notes:
 
 - https://github.com/74th/test-esp32-arduino/tree/main/20260201-esp_sr
 
-## 概要
+## Overview
 
-`srmodels.bin` は ESP-SR 用の音声認識モデルをまとめたバイナリです。  
-利用する Wake Word / Command モデルを選択して 1 つに束ねる必要があります。
+`srmodels.bin` is a bundled model binary for ESP-SR.  
+You need to select required wake-word / command models and package them into one binary.
 
-参考:
+Reference:
 
 - https://github.com/espressif/esp-sr/tree/master/docs/en/flash_model
 
-## 事前準備
+## Prerequisites
 
-### esp-sr を取得
+### Clone esp-sr
 
 ```bash
 cd ~/ghq/github.com/espressif
 git clone https://github.com/espressif/esp-sr.git
 ```
 
-### esp-idf を準備
+### Prepare esp-idf
 
 ```bash
 cd ~/ghq/github.com/espressif
@@ -31,11 +33,11 @@ cd esp-idf
 git checkout v5.5.2
 ./install.sh
 
-# このシェルで有効化
+# Enable ESP-IDF in this shell
 . ./export.sh
 ```
 
-## モデルビルド用の esp-idf プロジェクトを作る
+## Create an ESP-IDF project for model build
 
 ```bash
 cd ~/tmp
@@ -47,27 +49,27 @@ mkdir components
 ln -s ~/ghq/github.com/espressif/esp-sr components/
 ```
 
-## menuconfig でモデルを選ぶ
+## Select models in menuconfig
 
 ```bash
 idf.py menuconfig
 ```
 
-例:
+Example selection flow:
 
-1. `ESP Speech Recognition` を開く
-2. `Load Multiple Wake Words (WakeNet9)` を開く
-3. `Hi,Stack Chan (wn9_histackchan_tts3)` にチェック
-4. 必要なら `English Speech Commands Model (english recognition (mn5q8_en))` を有効化
-5. 保存して終了
+1. Open `ESP Speech Recognition`
+2. Open `Load Multiple Wake Words (WakeNet9)`
+3. Enable `Hi,Stack Chan (wn9_histackchan_tts3)`
+4. If needed, enable `English Speech Commands Model (english recognition (mn5q8_en))`
+5. Save and exit
 
-`sdkconfig` を確定させるために一度ビルドします。
+Run one build to finalize `sdkconfig`.
 
 ```bash
 idf.py build
 ```
 
-## srmodels.bin を生成
+## Generate srmodels.bin
 
 ```bash
 ESP_SR_PATH=~/ghq/github.com/espressif/esp-sr
@@ -75,17 +77,17 @@ SDKCONFIG_PATH=~/tmp/sr_model_proj/sdkconfig
 python ${ESP_SR_PATH}/model/movemodel.py -d1 ${SDKCONFIG_PATH} -d2 ${ESP_SR_PATH} -d3 ./build/
 ```
 
-生成物:
+Output:
 
 - `./build/srmodels.bin`
 
-必要なプロジェクトへコピーして使用します。
+Copy it to your target project:
 
 ```bash
 cp build/srmodels.bin /path/to/your/project/
 ```
 
-## 補足
+## Notes
 
-- Arduino IDE で `ESP SR 16M (3MB APP/7MB SPIFFS/2.9MB MODEL)` を使う場合、書き込み時に `model` 領域へ `srmodels.bin` がフラッシュされます。
-- WakeWord のみ使う場合は、Command モデルを含めない `srmodels.bin` でも運用できます（このライブラリは `sr_commands_len == 0` の利用を想定）。
+- If you use `ESP SR 16M (3MB APP/7MB SPIFFS/2.9MB MODEL)` in Arduino IDE, `srmodels.bin` is flashed to the `model` partition during upload.
+- For wake-word-only usage, a model set without command models can be used (this library supports `sr_commands_len == 0`).

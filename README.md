@@ -1,27 +1,31 @@
 # ESP_SR_M5Unified
 
-M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して、ESP32(S3/P4) でウェイクワード検出・音声コマンド認識を使うためのライブラリです。
+Japanese documentation: [`README_ja.md`](README_ja.md)
 
-## Arduino IDE で使う
+This library passes audio captured by `M5Unified` (`M5.Mic.record(...)`) into ESP-SR, enabling wake-word detection and voice command recognition on ESP32 (S3/P4).
 
-1. Arduino IDE の「追加のボードマネージャのURL」には、ESP32 ボード定義の URL を追加します。  
-   例: `https://espressif.github.io/arduino-esp32/package_esp32_index.json`
-2. ボードマネージャから ESP32 をインストールします。
-3. このリポジトリを ZIP ダウンロードして「ライブラリを追加(.ZIP)」でインストールします。
-4. `examples/EnglishCommand` または `examples/HiStackChanWakeUpWord` を開いて書き込みます。
+## Using with Arduino IDE
 
-注意: Arduino IDE の「追加のボードマネージャURL」は本来ボード定義配布用で、単体ライブラリの直接配布には使えません。  
-このライブラリは `library.properties` 対応済みなので、ZIP インストールまたはライブラリマネージャ経由公開で利用できます。
+1. Add the ESP32 board manager URL in Arduino IDE.  
+   Example: `https://espressif.github.io/arduino-esp32/package_esp32_index.json`
+2. Install the ESP32 core from Boards Manager.
+3. Download this repository as ZIP and install it via "Add .ZIP Library".
+4. Open and upload either:
+   - `examples/EnglishCommand`
+   - `examples/HiStackChanWakeUpWord`
 
-## PlatformIO で使う
+Note: "Additional Board Manager URLs" in Arduino IDE is for board packages, not standalone libraries.  
+This library is distributed as an Arduino library (`library.properties`), so use ZIP install (or future Library Manager publication).
 
-`ESP_SR` を使うため、`platform` は以下を指定してください。
+## Using with PlatformIO
+
+To use `ESP_SR`, set this platform:
 
 ```ini
 platform = https://github.com/pioarduino/platform-espressif32.git#55.03.30-2
 ```
 
-`platformio.ini` の `lib_deps` に以下のいずれかを追加します。
+Then add one of these to `lib_deps` in `platformio.ini`:
 
 ```ini
 lib_deps =
@@ -29,7 +33,7 @@ lib_deps =
     https://github.com/74th/ESP-SR-For-M5Unified.git
 ```
 
-ローカル相対パスなら以下です。
+For local relative path usage:
 
 ```ini
 lib_deps =
@@ -39,49 +43,50 @@ lib_deps =
 
 ## Examples
 
-- PlatformIO 用:
+- PlatformIO:
   - `examples/EnglishCommand_platformio`
   - `examples/HiStackChanWakeUpWord_platformio`
-- Arduino IDE 用:
+- Arduino IDE:
   - `examples/EnglishCommand/EnglishCommand.ino`
   - `examples/HiStackChanWakeUpWord/HiStackChanWakeUpWord.ino`
 
 ## srmodels.bin
 
-ESP-SR モデルは `srmodels.bin` を使用します。
+ESP-SR uses `srmodels.bin`.
 
-- このリポジトリには、各 example 用の `srmodels.bin` を同梱しています。
+- This repository includes per-example `srmodels.bin` files:
   - `examples/HiStackChanWakeUpWord/srmodels.bin`
   - `examples/EnglishCommand/srmodels.bin`
   - `examples/HiStackChanWakeUpWord_platformio/srmodels.bin`
   - `examples/EnglishCommand_platformio/srmodels.bin`
-- モデル内容は example ごとに異なります。
-  - `HiStackChanWakeUpWord` 用: HiStackChan の Wake Word モデル
-  - `EnglishCommand` 用: HiStackChan の Wake Word + English Command モデル
-- PlatformIO examples では `srmodels.bin` を各 example フォルダに置くと、`scripts/flash_srmodels.py` がアップロード後に `model` パーティションへ書き込みます。
-- パーティションは `partitions_esp_sr_16.csv` を使用します。
-- 自分のプロジェクトで使う場合は、目的に合う example ディレクトリの `srmodels.bin` をプロジェクト直下へコピーして利用してください。
-- `srmodels.bin` のビルド手順は `docs/build-srmodels.md` を参照してください。
+- Model contents differ by example:
+  - `HiStackChanWakeUpWord`: HiStackChan wake-word model
+  - `EnglishCommand`: HiStackChan wake-word + English command model
+- In PlatformIO examples, placing `srmodels.bin` in each example folder allows `scripts/flash_srmodels.py` to flash it to the `model` partition after firmware upload.
+- Partition table used there: `partitions_esp_sr_16.csv`.
+- For your own project, copy the appropriate `srmodels.bin` from the example directory into your project root.
+- See `docs/build-srmodels.md` for how to build `srmodels.bin`.
 
-### Arduino IDE での `srmodels.bin` 書き込み
+### How `srmodels.bin` is flashed in Arduino IDE
 
-このライブラリを Arduino IDE で使う場合は、`Partition Scheme` で必ず以下を選択してください。
+When using this library in Arduino IDE, select this partition scheme:
 
 - `ESP SR 16M (3MB APP/7MB SPIFFS/2.9MB MODEL)`
 
-`arduino-esp32` (3.3.6) の実装では、概ね次の流れで `srmodels.bin` が書き込まれます。
+In `arduino-esp32` (3.3.6), `srmodels.bin` is handled roughly as follows:
 
-1. ビルド時フックで、`ESP_SR` ライブラリが使われている場合に `srmodels.bin` をビルド出力へコピー  
-   (`platform.txt` の `recipe.hooks.objcopy.postobjcopy.2.pattern`)
-2. 書き込み時、`Partition Scheme = esp_sr_16` の設定で `upload.extra_flags` に  
-   `0xD10000 {build.path}/srmodels.bin` が追加され、モデル領域へ書き込み  
-   (`boards.txt` の `*.menu.PartitionScheme.esp_sr_16.upload.extra_flags`)
+1. A build hook copies `srmodels.bin` into the build output when `ESP_SR` library is in use  
+   (`platform.txt`: `recipe.hooks.objcopy.postobjcopy.2.pattern`)
+2. On upload, selecting `Partition Scheme = esp_sr_16` adds this upload flag:  
+   `0xD10000 {build.path}/srmodels.bin`  
+   and flashes it to the model region  
+   (`boards.txt`: `*.menu.PartitionScheme.esp_sr_16.upload.extra_flags`)
 
-このリポジトリでは、Arduino IDE では上記 `ESP SR 16M` パーティションを前提として使用してください。
-もし `srmodels.bin` が見つからないエラーになる場合は、Arduino コア付属の `ESP_SR` ライブラリがビルド対象に入っているか確認してください。
+This repository assumes the `ESP SR 16M` partition scheme for Arduino IDE usage.
+If you get an error saying `srmodels.bin` is missing, confirm that Arduino core's `ESP_SR` library is included in the build.
 
-## モデルライセンス
+## Model license
 
-- このライブラリで使う WakeUpWord / Command モデルは、`https://github.com/espressif/esp-sr` に含まれるモデルを利用しています。
-- モデルファイルのライセンス条件は `esp-sr` 側の規約・ライセンスに依存します。
-- 利用・再配布時は必ず `esp-sr` リポジトリのライセンスと関連ドキュメントを確認してください。
+- Wake-word / command models used by this library are from `https://github.com/espressif/esp-sr`.
+- Licensing terms of model files depend on the `esp-sr` project.
+- Always check the `esp-sr` repository license and related documentation before use or redistribution.
