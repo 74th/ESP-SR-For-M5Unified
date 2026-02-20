@@ -1,0 +1,35 @@
+{
+  "name": "ESP_SR_M5Unified",
+  "version": "1.0.0",
+  "description": "ESP-SR wrapper for using wake word and voice commands via M5Unified microphone input",
+  "keywords": [
+    "esp32",
+    "speech-recognition",
+    "wakeword",
+    "m5stack",
+    "m5unified"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/74th/ESP-SR-For-M5Unified.git"
+  },
+  "authors": [
+    {
+      "name": "74th"
+    }
+  ],
+  "license": "LGPL-2.1",
+  "frameworks": [
+    "arduino"
+  ],
+  "platforms": [
+    "espressif32"
+  ],
+  "dependencies": [
+    {
+      "name": "M5Unified",
+      "owner": "m5stack",
+      "version": ">=0.2.10"
+    }
+  ]
+}
