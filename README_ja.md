@@ -1,16 +1,19 @@
 # ESP_SR_M5Unified
 
+> [!CAUTION]
+> このリポジトリはまだ作業中です。
+
 M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して、ESP32(S3/P4) でウェイクワード検出・音声コマンド認識を使うためのライブラリです。
 
 ## Arduino IDE で使う
 
-1. Arduino IDE の「追加のボードマネージャのURL」には、ESP32 ボード定義の URL を追加します。  
+1. Arduino IDE の「追加のボードマネージャのURL」には、ESP32 ボード定義の URL を追加します。
    例: `https://espressif.github.io/arduino-esp32/package_esp32_index.json`
 2. ボードマネージャから ESP32 をインストールします。
 3. このリポジトリを ZIP ダウンロードして「ライブラリを追加(.ZIP)」でインストールします。
 4. `examples/EnglishCommand` または `examples/HiStackChanWakeUpWord` を開いて書き込みます。
 
-注意: Arduino IDE の「追加のボードマネージャURL」は本来ボード定義配布用で、単体ライブラリの直接配布には使えません。  
+注意: Arduino IDE の「追加のボードマネージャURL」は本来ボード定義配布用で、単体ライブラリの直接配布には使えません。
 このライブラリは `library.properties` 対応済みなので、ZIP インストールまたはライブラリマネージャ経由公開で利用できます。
 
 ## PlatformIO で使う
@@ -71,10 +74,10 @@ ESP-SR モデルは `srmodels.bin` を使用します。
 
 `arduino-esp32` (3.3.6) の実装では、概ね次の流れで `srmodels.bin` が書き込まれます。
 
-1. ビルド時フックで、`ESP_SR` ライブラリが使われている場合に `srmodels.bin` をビルド出力へコピー  
+1. ビルド時フックで、`ESP_SR` ライブラリが使われている場合に `srmodels.bin` をビルド出力へコピー
    (`platform.txt` の `recipe.hooks.objcopy.postobjcopy.2.pattern`)
-2. 書き込み時、`Partition Scheme = esp_sr_16` の設定で `upload.extra_flags` に  
-   `0xD10000 {build.path}/srmodels.bin` が追加され、モデル領域へ書き込み  
+2. 書き込み時、`Partition Scheme = esp_sr_16` の設定で `upload.extra_flags` に
+   `0xD10000 {build.path}/srmodels.bin` が追加され、モデル領域へ書き込み
    (`boards.txt` の `*.menu.PartitionScheme.esp_sr_16.upload.extra_flags`)
 
 このリポジトリでは、Arduino IDE では上記 `ESP SR 16M` パーティションを前提として使用してください。

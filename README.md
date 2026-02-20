@@ -1,12 +1,15 @@
 # ESP_SR_M5Unified
 
+> [!CAUTION]
+> This repostiroty is work in progress.
+
 Japanese documentation: [`README_ja.md`](README_ja.md)
 
 This library passes audio captured by `M5Unified` (`M5.Mic.record(...)`) into ESP-SR, enabling wake-word detection and voice command recognition on ESP32 (S3/P4).
 
 ## Using with Arduino IDE
 
-1. Add the ESP32 board manager URL in Arduino IDE.  
+1. Add the ESP32 board manager URL in Arduino IDE.
    Example: `https://espressif.github.io/arduino-esp32/package_esp32_index.json`
 2. Install the ESP32 core from Boards Manager.
 3. Download this repository as ZIP and install it via "Add .ZIP Library".
@@ -14,7 +17,7 @@ This library passes audio captured by `M5Unified` (`M5.Mic.record(...)`) into ES
    - `examples/EnglishCommand`
    - `examples/HiStackChanWakeUpWord`
 
-Note: "Additional Board Manager URLs" in Arduino IDE is for board packages, not standalone libraries.  
+Note: "Additional Board Manager URLs" in Arduino IDE is for board packages, not standalone libraries.
 This library is distributed as an Arduino library (`library.properties`), so use ZIP install (or future Library Manager publication).
 
 ## Using with PlatformIO
@@ -75,11 +78,11 @@ When using this library in Arduino IDE, select this partition scheme:
 
 In `arduino-esp32` (3.3.6), `srmodels.bin` is handled roughly as follows:
 
-1. A build hook copies `srmodels.bin` into the build output when `ESP_SR` library is in use  
+1. A build hook copies `srmodels.bin` into the build output when `ESP_SR` library is in use
    (`platform.txt`: `recipe.hooks.objcopy.postobjcopy.2.pattern`)
-2. On upload, selecting `Partition Scheme = esp_sr_16` adds this upload flag:  
-   `0xD10000 {build.path}/srmodels.bin`  
-   and flashes it to the model region  
+2. On upload, selecting `Partition Scheme = esp_sr_16` adds this upload flag:
+   `0xD10000 {build.path}/srmodels.bin`
+   and flashes it to the model region
    (`boards.txt`: `*.menu.PartitionScheme.esp_sr_16.upload.extra_flags`)
 
 This repository assumes the `ESP SR 16M` partition scheme for Arduino IDE usage.
