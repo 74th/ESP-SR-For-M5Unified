@@ -1,7 +1,7 @@
 # ESP_SR_M5Unified
 
 > [!CAUTION]
-> This repostiroty is work in progress.
+> This repository is still a work in progress.
 
 Japanese documentation: [`README_ja.md`](README_ja.md)
 
@@ -11,14 +11,32 @@ This library passes audio captured by `M5Unified` (`M5.Mic.record(...)`) into ES
 
 1. Add the ESP32 board manager URL in Arduino IDE.
    Example: `https://espressif.github.io/arduino-esp32/package_esp32_index.json`
-2. Install the ESP32 core from Boards Manager.
-3. Download this repository as ZIP and install it via "Add .ZIP Library".
-4. Open and upload either:
+2. Install "esp32 by Espressif Systems" from Boards Manager.
+3. Install "M5Unified by M5Stack" from Library Manager.
+4. Download the ZIP from the [Releases page](https://github.com/74th/ESP-SR-For-M5Unified/releases), then install it via:
+   - Sketch → Include Library → Add .ZIP Library...
+5. Select your board:
+   - Tools → Board → esp32 → `M5CoreS3`
+6. Select partition scheme:
+   - Tools → Partition Scheme → `ESP SR 16M (3MB APP/7MB SPIFFS/2.9MB MODEL)`
+7. Open and upload either:
    - `examples/EnglishCommand`
    - `examples/HiStackChanWakeUpWord`
+8. In your own sketch, include both libraries (either from menu or by code):
+   - Sketch → Include Library → `M5Unified`
+   - Sketch → Include Library → `ESP_SR_M5Unified`
+   - Or add:
+     - `#include <M5Unified.h>`
+     - `#include <ESP_SR_M5Unified.h>`
+9. Run upload once.
+   You may get an error like:
+   `No such file or directory: '/../sketches/29D8C511C331F3ECE9B67A907A88C7AF/srmodels.bin'`
+   Copy one of the following `srmodels.bin` files into the path shown in the error message:
+   - [examples/HiStackChanWakeUpWord/srmodels.bin](examples/HiStackChanWakeUpWord/srmodels.bin): HiStackChan wake-word only
+   - [examples/EnglishCommand/srmodels.bin](examples/EnglishCommand/srmodels.bin): HiStackChan wake-word + English command
+10. Upload again.
+   This time, upload should complete and `srmodels.bin` will be flashed to the model partition.
 
-Note: "Additional Board Manager URLs" in Arduino IDE is for board packages, not standalone libraries.
-This library is distributed as an Arduino library (`library.properties`), so use ZIP install (or future Library Manager publication).
 
 ## Using with PlatformIO
 

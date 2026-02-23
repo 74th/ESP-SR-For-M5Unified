@@ -9,12 +9,25 @@ M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して�
 
 1. Arduino IDE の「追加のボードマネージャのURL」には、ESP32 ボード定義の URL を追加します。
    例: `https://espressif.github.io/arduino-esp32/package_esp32_index.json`
-2. ボードマネージャから ESP32 をインストールします。
-3. このリポジトリを ZIP ダウンロードして「ライブラリを追加(.ZIP)」でインストールします。
-4. `examples/EnglishCommand` または `examples/HiStackChanWakeUpWord` を開いて書き込みます。
-
-注意: Arduino IDE の「追加のボードマネージャURL」は本来ボード定義配布用で、単体ライブラリの直接配布には使えません。
-このライブラリは `library.properties` 対応済みなので、ZIP インストールまたはライブラリマネージャ経由公開で利用できます。
+2. ボードマネージャから "esp32 by Espressif Systems" をインストールします。
+3. ライブラリマネージャから "M5Unified by M5Stack" をインストールします。
+4. [このリポジトリのReleaseページ](https://github.com/74th/ESP-SR-For-M5Unified/releases) から ZIP ファイルをダウンロードしてメニューの「スケッチ」→「ライブラリをインクルード」→「.ZIP形式のライブラリをインストール」でインストールします。
+5. メニューの「ツール」→「ボード: xxx」→「esp32」→「M5CoreS2」を選択します。
+6. メニューの「ツール」→「Partition Schema」→「ESP SR 16M (3MB APP/7MB SPIFFS/2.9MB MODEL)」を選択します。
+7. `examples/EnglishCommand` または `examples/HiStackChanWakeUpWord` を参考に組み込みます。
+8. スケッチに、次の2つのライブラリを追加してください（メニュー操作またはコード追加）。
+   - メニュー「スケッチ」→「ライブラリをインクルード」→「M5Unified」
+   - メニュー「スケッチ」→「ライブラリをインクルード」→「ESP_SR_M5Unified」
+   - もしくは、コードに以下を追加:
+     - `#include <M5Unified.h>`
+     - `#include <ESP_SR_M5Unified.h>`
+9. 一度「書き込み」を実行してください。
+   エラーになり、メッセージに `No such file or directory: '/../sketches/29D8C511C331F3ECE9B67A907A88C7AF/srmodels.bin'` のように表示されます。
+   この場所に、srmodels.bin をコピーしておいてください。
+    - [examples/HiStackChanWakeUpWord/srmodels.bin](examples/HiStackChanWakeUpWord/srmodels.bin): HiStackChanのWakeUpWordのみ
+    - [examples/EnglishCommand/srmodels.bin](examples/EnglishCommand/srmodels.bin): HiStackChanのWakeUpWord + English Command
+10. 再度「書き込み」を実行してください。
+   今度はエラーにならず、書き込み後に `srmodels.bin` がモデル領域へ書き込まれます。
 
 ## PlatformIO で使う
 
