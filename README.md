@@ -59,8 +59,6 @@ This setting allocates an 8MB partition for model data.
 
 #### For AtomS3R / Atom Echo S3R
 
-Select Tools → Partition Schema → `Custom`.
-
 Copy [./partitions_esp_sr_8.csv](./partitions_esp_sr_8.csv) into your sketch directory as `partitions.csv`.
 
 This setting allocates 3MB for the model partition and keeps app/SPIFFS partitions smaller.
@@ -235,7 +233,7 @@ ESP-SR uses `srmodels.bin`.
 - In PlatformIO examples, placing `srmodels.bin` in each example folder allows `scripts/flash_srmodels.py` to flash it to the `model` partition after firmware upload.
 - Partition table used there: `partitions_esp_sr_16.csv`.
 - For your own project, copy the appropriate `srmodels.bin` from the example directory into your project root.
-- See `docs/build-srmodels.md` for how to build `srmodels.bin`.
+- See [docs/build-srmodels.md](docs/build-srmodels.md) for how to build `srmodels.bin`.
 
 ### How `srmodels.bin` is flashed in Arduino IDE
 

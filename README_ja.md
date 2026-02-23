@@ -235,7 +235,7 @@ ESP-SR モデルは `srmodels.bin` を使用します。
 - PlatformIO examples では `srmodels.bin` を各 example フォルダに置くと、`scripts/flash_srmodels.py` がアップロード後に `model` パーティションへ書き込みます。
 - パーティションは `partitions_esp_sr_16.csv` を使用します。
 - 自分のプロジェクトで使う場合は、目的に合う example ディレクトリの `srmodels.bin` をプロジェクト直下へコピーして利用してください。
-- `srmodels.bin` のビルド手順は `docs/build-srmodels_ja.md` を参照してください。
+- `srmodels.bin` のビルド手順は [docs/build-srmodels_ja.md](docs/build-srmodels_ja.md) を参照してください。
 
 ### Arduino IDE での `srmodels.bin` 書き込み
 
