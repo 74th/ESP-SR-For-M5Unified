@@ -4,12 +4,14 @@ M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して�
 
 [esp32-arduino](https://github.com/espressif/arduino-esp32)に含まれる ESP-SR ライブラリを M5Unified で使えるようにリライトしています。
 
-- https://x.com/74th/status/2018644006021070944
-- https://x.com/74th/status/2020485095518302578
-
 ## 動作確認済み
 
 - M5Stack CoreS3
+
+## デモ
+
+- https://x.com/74th/status/2018644006021070944
+- https://x.com/74th/status/2020485095518302578
 
 ## Arduino IDE で使う
 

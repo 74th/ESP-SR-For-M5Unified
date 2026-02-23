@@ -6,12 +6,14 @@ This library passes audio captured by `M5Unified` (`M5.Mic.record(...)`) into ES
 
 This library rewrites the ESP-SR library included in [esp32-arduino](https://github.com/espressif/arduino-esp32) so it can be used with M5Unified.
 
-- https://x.com/74th/status/2018644006021070944
-- https://x.com/74th/status/2020485095518302578
-
 ## Tested hardware
 
 - M5Stack CoreS3
+
+## Demos
+
+- https://x.com/74th/status/2018644006021070944
+- https://x.com/74th/status/2020485095518302578
 
 ## Using with Arduino IDE
 
