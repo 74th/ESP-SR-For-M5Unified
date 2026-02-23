@@ -19,7 +19,7 @@ This library rewrites the ESP-SR library included in [esp32-arduino](https://git
 
 ## Using with Arduino IDE
 
-### Install Espressif's official ESP32 board package
+### 1. Install Espressif's official ESP32 board package
 
 In Arduino IDE, add the ESP32 board package URL in Preferences → Additional Board Manager URLs.
 
@@ -29,11 +29,11 @@ Install "esp32 by Espressif Systems" from Boards Manager.
 
 Install "M5Unified by M5Stack" from Library Manager.
 
-### Install ESP-SR For M5Unified
+### 2. Install ESP-SR For M5Unified
 
 Download the ZIP from the [Releases page](https://github.com/74th/ESP-SR-For-M5Unified/releases), then install it via Sketch → Include Library → Add .ZIP Library...
 
-### Select board
+### 3. Select board
 
 #### For CoreS3 / official Stack-chan
 
@@ -45,7 +45,7 @@ Select Tools → Board → esp32 → `M5AtomS3`.
 
 Select Tools → PSRAM → `OPI PSRAM`.
 
-### Configure partition
+### 4. Configure partition
 
 You need to add a partition for the model.
 The settings below use relatively large partition sizes.
@@ -63,7 +63,7 @@ Copy [./partitions_esp_sr_8.csv](./partitions_esp_sr_8.csv) into your sketch dir
 
 This setting allocates 3MB for the model partition and keeps app/SPIFFS partitions smaller.
 
-### Include libraries
+### 5. Include libraries
 
 In your sketch, add these two libraries (from menu or in code):
 
@@ -76,13 +76,13 @@ In your sketch, add these two libraries (from menu or in code):
 > [!NOTE]
 > If added from the menu, `esp32-hal-sr-m5.h` may also be inserted automatically. It is not needed, so remove it.
 
-### Implement your sketch
+### 6. Implement your sketch
 
 Use `examples/EnglishCommand` or `examples/HiStackChanWakeUpWord` as references.
 
 Also see the implementation guide below.
 
-### Upload
+### 7. Upload
 
 Run upload once.
 

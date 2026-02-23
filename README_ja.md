@@ -17,7 +17,7 @@ M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して�
 
 ## Arduino IDE で使う
 
-### Espressif 公式の ESP32 ボード定義のインストール
+### 1. Espressif 公式の ESP32 ボード定義のインストール
 
 Arduino IDEの「基本設定」の「追加のボードマネージャのURL」に、ESP32 ボード定義の URL を追加します。
 
@@ -27,11 +27,11 @@ Arduino IDEの「基本設定」の「追加のボードマネージャのURL」
 
 ライブラリマネージャから "M5Unified by M5Stack" をインストールします。
 
-### ESP-SR For M5Unified のインストール
+### 2. ESP-SR For M5Unified のインストール
 
 [このリポジトリのReleaseページ](https://github.com/74th/ESP-SR-For-M5Unified/releases) から ZIP ファイルをダウンロードしてメニューの「スケッチ」→「ライブラリをインクルード」→「.ZIP形式のライブラリをインストール」でインストールします。
 
-### ボードの選択
+### 3. ボードの選択
 
 #### CoreS3、公式スタックチャンの場合
 
@@ -43,7 +43,7 @@ Arduino IDEの「基本設定」の「追加のボードマネージャのURL」
 
 メニューの「ツール」→「PSRAM: xxx」→「OPI PSRAM」を選択します。
 
-### パーティションの設定
+### 4. パーティションの設定
 
 model パーティションを追加する必要があります。
 以下の設定は大きめのパーティションを設定しています。
@@ -61,7 +61,7 @@ model 以外のパーティションのサイズが必要な場合、適宜調�
 
 この設定は、modelのパーティションに3MBを設定し、app、spiffsのパーティションを小さめに設定します。
 
-### ライブラリのインクルード
+### 5. ライブラリのインクルード
 
 スケッチに、次の2つのライブラリを追加してください（メニュー操作またはコード追加）。
 - メニュー「スケッチ」→「ライブラリをインクルード」→「M5Unified」
@@ -73,13 +73,13 @@ model 以外のパーティションのサイズが必要な場合、適宜調�
 > [!NOTE]
 > メニューから追加すると、`esp32-hal-sr-m5.h` も追加されますが、必要ではないため、削除してください。
 
-### 実装
+### 6. 実装
 
 `examples/EnglishCommand` または `examples/HiStackChanWakeUpWord` を参考に組み込みます。
 
 後述の実装方法も確認ください。
 
-### 書き込み
+### 7. 書き込み
 
 一度「書き込み」を実行してください。
 
@@ -129,10 +129,6 @@ board_build.partitions = partitions.csv
 ```ini
 extra_scripts = post:scripts/flash_srmodels.py
 ```
-
-### AtomS3Rを利用する場合
-
-
 
 ## Examples
 
