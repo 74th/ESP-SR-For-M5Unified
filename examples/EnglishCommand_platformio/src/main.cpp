@@ -15,47 +15,79 @@ static const sr_cmd_t sr_commands[] = {
 };
 static constexpr size_t sr_commands_len = sizeof(sr_commands) / sizeof(sr_commands[0]);
 
+static bool display_available = false;
+
 void onSrEvent(sr_event_t event, int command_id, int phrase_id)
 {
   switch (event)
   {
   case SR_EVENT_WAKEWORD:
-    M5.Display.fillScreen(TFT_GREEN);
-    M5.Display.setCursor(10, 10);
-    M5.Display.setTextSize(3);
-    M5.Display.setTextColor(TFT_BLACK, TFT_GREEN);
-    M5.Display.println("Command?");
-    ESP_SR_M5.setMode(SR_MODE_COMMAND);
+    Serial.println("Command?");
+    if (display_available)
+    {
+      M5.Display.fillScreen(TFT_GREEN);
+      M5.Display.setCursor(10, 10);
+      M5.Display.setTextSize(3);
+      M5.Display.setTextColor(TFT_BLACK, TFT_GREEN);
+      M5.Display.println("Command?");
+      ESP_SR_M5.setMode(SR_MODE_COMMAND);
+    }
+#ifdef ARDUINO_ATOM_ECHOS3R
+    digitalWrite(G8, HIGH);
+#endif
     break;
 
   case SR_EVENT_TIMEOUT:
-    M5.Display.fillScreen(TFT_BLACK);
-    M5.Display.setCursor(0, 0);
-    M5.Display.setTextSize(2);
-    M5.Display.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Display.println("Listening...");
+    Serial.println("Listening...");
+
+    if (display_available)
+    {
+      M5.Display.fillScreen(TFT_BLACK);
+      M5.Display.setCursor(0, 0);
+      M5.Display.setTextSize(2);
+      M5.Display.setTextColor(TFT_WHITE, TFT_BLACK);
+      M5.Display.println("Listening...");
+    }
+#ifdef ARDUINO_ATOM_ECHOS3R
+    digitalWrite(G8, LOW);
+#endif
     ESP_SR_M5.setMode(SR_MODE_WAKEWORD);
     break;
 
   case SR_EVENT_COMMAND:
-    M5.Display.fillScreen(TFT_BLUE);
-    M5.Display.setCursor(10, 10);
-    M5.Display.setTextSize(2);
-    M5.Display.setTextColor(TFT_BLACK, TFT_BLUE);
-    M5.Display.printf("Command: %d\n", command_id);
+    Serial.printf("Command %d detected\n", command_id);
     if (phrase_id >= 0 && static_cast<size_t>(phrase_id) < sr_commands_len)
     {
-      M5.Display.println(sr_commands[phrase_id].str);
-      Serial.printf("Command %d detected: %s\n", command_id, sr_commands[phrase_id].str);
+      Serial.printf("Command %s\n", sr_commands[phrase_id].str);
+    }
+    if (display_available)
+    {
+      M5.Display.fillScreen(TFT_BLUE);
+      M5.Display.setCursor(10, 10);
+      M5.Display.setTextSize(2);
+      M5.Display.setTextColor(TFT_BLACK, TFT_BLUE);
+      M5.Display.printf("Command: %d\n", command_id);
+      if (phrase_id >= 0 && static_cast<size_t>(phrase_id) < sr_commands_len)
+      {
+        M5.Display.println(sr_commands[phrase_id].str);
+      }
     }
 
     delay(3000);
 
-    M5.Display.fillScreen(TFT_BLACK);
-    M5.Display.setCursor(0, 0);
-    M5.Display.setTextSize(2);
-    M5.Display.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Display.println("Listening...");
+    Serial.println("Listening...");
+
+    if (display_available)
+    {
+      M5.Display.fillScreen(TFT_BLACK);
+      M5.Display.setCursor(0, 0);
+      M5.Display.setTextSize(2);
+      M5.Display.setTextColor(TFT_WHITE, TFT_BLACK);
+      M5.Display.println("Listening...");
+    }
+#ifdef ARDUINO_ATOM_ECHOS3R
+    digitalWrite(G8, LOW);
+#endif
     ESP_SR_M5.setMode(SR_MODE_WAKEWORD);
     break;
 
@@ -70,15 +102,44 @@ void setup()
   delay(100);
 
   auto cfg = M5.config();
+
+#ifdef ARDUINO_ATOM_ECHOS3R
+  cfg.internal_mic = true;
+#endif
+
+#ifdef WITH_ECHO_BASE
+  // ATOM S3R with Atomic ECHO BASE
+  cfg.external_speaker.atomic_echo = 1;
+#endif
+
   M5.begin(cfg);
 
-  M5.Display.setRotation(1);
-  M5.Display.setTextSize(2);
-  M5.Display.println("Init...");
+  display_available = M5.getDisplayCount() > 0;
+
+  Serial.println("Init...");
+  if (display_available)
+  {
+    M5.Display.setRotation(1);
+    M5.Display.setTextSize(2);
+    M5.Display.println("Init...");
+  }
+  if (cfg.external_speaker.atomic_echo)
+  {
+    Serial.println("ECHO BASE");
+    if (display_available)
+    {
+      M5.Display.println("ECHO BASE");
+    }
+  }
+
+#ifdef ARDUINO_ATOM_ECHOS3R
+  pinMode(G8, OUTPUT);
+#endif
+
+  delay(2000);
 
   auto mic_cfg = M5.Mic.config();
   mic_cfg.sample_rate = 16000;
-  mic_cfg.stereo = USE_STEREO;
   M5.Mic.config(mic_cfg);
   M5.Mic.begin();
 
@@ -95,15 +156,26 @@ void setup()
 
   if (success)
   {
-    M5.Display.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Display.println("Listening...");
-    M5.Display.setTextSize(1);
-    M5.Display.println("Say: 'Hi Stack Chan'");
+    Serial.println("Listening...");
+    Serial.println("Say: 'Hi Stack Chan'");
+
+    if (display_available)
+    {
+      M5.Display.setTextColor(TFT_WHITE, TFT_BLACK);
+      M5.Display.println("Listening...");
+      M5.Display.setTextSize(1);
+      M5.Display.println("Say: 'Hi Stack Chan'");
+    }
   }
   else
   {
-    M5.Display.setTextColor(TFT_RED, TFT_BLACK);
-    M5.Display.println("Init Failed!");
+    Serial.println("Init Failed!");
+
+    if (display_available)
+    {
+      M5.Display.setTextColor(TFT_RED, TFT_BLACK);
+      M5.Display.println("Init Failed!");
+    }
   }
 }
 
