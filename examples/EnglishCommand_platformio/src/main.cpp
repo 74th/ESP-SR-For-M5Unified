@@ -48,6 +48,14 @@ void onSrEvent(sr_event_t event, int command_id, int phrase_id)
       M5.Display.println(sr_commands[phrase_id].str);
       Serial.printf("Command %d detected: %s\n", command_id, sr_commands[phrase_id].str);
     }
+
+    delay(3000);
+
+    M5.Display.fillScreen(TFT_BLACK);
+    M5.Display.setCursor(0, 0);
+    M5.Display.setTextSize(2);
+    M5.Display.setTextColor(TFT_WHITE, TFT_BLACK);
+    M5.Display.println("Listening...");
     ESP_SR_M5.setMode(SR_MODE_WAKEWORD);
     break;
 
