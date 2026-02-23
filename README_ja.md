@@ -2,8 +2,14 @@
 
 M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して、ESP32(S3/P4) でウェイクワード検出・音声コマンド認識を使うためのライブラリです。
 
+[esp32-arduino](https://github.com/espressif/arduino-esp32)に含まれる ESP-SR ライブラリを M5Unified で使えるようにリライトしています。
+
 - https://x.com/74th/status/2018644006021070944
 - https://x.com/74th/status/2020485095518302578
+
+## 動作確認済み
+
+- M5Stack CoreS3
 
 ## Arduino IDE で使う
 
@@ -12,7 +18,7 @@ M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して�
 2. ボードマネージャから "esp32 by Espressif Systems" をインストールします。
 3. ライブラリマネージャから "M5Unified by M5Stack" をインストールします。
 4. [このリポジトリのReleaseページ](https://github.com/74th/ESP-SR-For-M5Unified/releases) から ZIP ファイルをダウンロードしてメニューの「スケッチ」→「ライブラリをインクルード」→「.ZIP形式のライブラリをインストール」でインストールします。
-5. メニューの「ツール」→「ボード: xxx」→「esp32」→「M5CoreS2」を選択します。
+5. メニューの「ツール」→「ボード: xxx」→「esp32」→「M5CoreS3」を選択します。
 6. メニューの「ツール」→「Partition Schema」→「ESP SR 16M (3MB APP/7MB SPIFFS/2.9MB MODEL)」を選択します。
 7. `examples/EnglishCommand` または `examples/HiStackChanWakeUpWord` を参考に組み込みます。
 8. スケッチに、次の2つのライブラリを追加してください（メニュー操作またはコード追加）。
@@ -156,3 +162,7 @@ ESP-SR モデルは `srmodels.bin` を使用します。
 - このライブラリで使う WakeUpWord / Command モデルは、`https://github.com/espressif/esp-sr` に含まれるモデルを利用しています。
 - モデルファイルのライセンス条件は `esp-sr` 側の規約・ライセンスに依存します。
 - 利用・再配布時は必ず `esp-sr` リポジトリのライセンスと関連ドキュメントを確認してください。
+
+## 含まれるリソース
+
+- partitions_esp_sr_16.csv: https://github.com/espressif/arduino-esp32/blob/89bcb9c2c7abb6fc90784cef4a870e0e9ff03579/tools/partitions/esp_sr_16.csv

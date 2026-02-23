@@ -4,8 +4,14 @@ Japanese documentation: [`README_ja.md`](README_ja.md)
 
 This library passes audio captured by `M5Unified` (`M5.Mic.record(...)`) into ESP-SR, enabling wake-word detection and voice command recognition on ESP32 (S3/P4).
 
+This library rewrites the ESP-SR library included in [esp32-arduino](https://github.com/espressif/arduino-esp32) so it can be used with M5Unified.
+
 - https://x.com/74th/status/2018644006021070944
 - https://x.com/74th/status/2020485095518302578
+
+## Tested hardware
+
+- M5Stack CoreS3
 
 ## Using with Arduino IDE
 
@@ -166,3 +172,7 @@ If you get an error saying `srmodels.bin` is missing, confirm that Arduino core'
 - Wake-word / command models used by this library are from `https://github.com/espressif/esp-sr`.
 - Licensing terms of model files depend on the `esp-sr` project.
 - Always check the `esp-sr` repository license and related documentation before use or redistribution.
+
+## included resouces
+
+- partitions_esp_sr_16.csv: https://github.com/espressif/arduino-esp32/blob/89bcb9c2c7abb6fc90784cef4a870e0e9ff03579/tools/partitions/esp_sr_16.csv
