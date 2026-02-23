@@ -4,6 +4,9 @@ Japanese documentation: [`README_ja.md`](README_ja.md)
 
 This library passes audio captured by `M5Unified` (`M5.Mic.record(...)`) into ESP-SR, enabling wake-word detection and voice command recognition on ESP32 (S3/P4).
 
+- https://x.com/74th/status/2018644006021070944
+- https://x.com/74th/status/2020485095518302578
+
 ## Using with Arduino IDE
 
 1. Add the ESP32 board manager URL in Arduino IDE.

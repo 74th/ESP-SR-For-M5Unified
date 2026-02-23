@@ -2,6 +2,9 @@
 
 M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して、ESP32(S3/P4) でウェイクワード検出・音声コマンド認識を使うためのライブラリです。
 
+- https://x.com/74th/status/2018644006021070944
+- https://x.com/74th/status/2020485095518302578
+
 ## Arduino IDE で使う
 
 1. Arduino IDE の「追加のボードマネージャのURL」には、ESP32 ボード定義の URL を追加します。
