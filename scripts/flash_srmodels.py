@@ -1,66 +1,43 @@
+# scripts/flash_srmodels.py
 Import("env")
+import os, csv, subprocess, sys
 
-import csv
-from pathlib import Path
-
-
-def _resolve(path: str) -> Path:
-    project_dir = Path(env.subst("$PROJECT_DIR"))
-    return (project_dir / path).resolve()
-
-
-def _read_model_offset(partition_csv: Path):
-    if not partition_csv.exists():
-        print(f"[ESP_SR_M5Unified] partition file not found: {partition_csv}")
-        return None
-
-    with partition_csv.open("r", encoding="utf-8") as f:
+def find_partition_offset(csv_path, name_candidates=("model", "srmodels", "esp_sr")):
+    with open(csv_path, newline="") as f:
         rows = csv.reader(f)
         for row in rows:
             if not row or row[0].strip().startswith("#"):
                 continue
-            if len(row) < 5:
-                continue
-            if row[0].strip() == "model":
-                return row[3].strip()
+            # CSV: Name, Type, SubType, Offset, Size, Flags
+            name = row[0].strip()
+            if name in name_candidates:
+                off = row[3].strip()
+                if not off:
+                    raise RuntimeError("Partition offset is empty; please set explicit Offset in CSV.")
+                return int(off, 0)
+    raise RuntimeError(f"Model partition not found in {csv_path}. Expected one of {name_candidates}.")
 
-    print("[ESP_SR_M5Unified] model partition is not defined in partition table")
-    return None
+def after_upload(source, target, env):
+    proj = env["PROJECT_DIR"]
+    csv_path = os.path.join(proj, env.BoardConfig().get("build.partitions", "partitions.csv"))
+    # arduino-esp32のsrmodels.bin（PlatformIOのframeworkパッケージ内にある前提）
+    framework_dir = env.PioPlatform().get_package_dir("framework-arduinoespressif32")
+    chip = env.BoardConfig().get("build.mcu", "esp32s3")  # CoreS3ならesp32s3想定
+    srmodels = os.path.join("srmodels.bin")
 
+    if not os.path.exists(srmodels):
+        raise RuntimeError(f"srmodels.bin not found: {srmodels}")
 
-def _flash_srmodels(source, target, env_):
-    partition_rel = env_.GetProjectOption("board_build.partitions", "")
-    if not partition_rel:
-        print("[ESP_SR_M5Unified] skip: board_build.partitions is not set")
-        return
+    offset = find_partition_offset(csv_path)
 
-    partition_csv = _resolve(partition_rel)
-    model_bin = _resolve("srmodels.bin")
+    port = env.subst("$UPLOAD_PORT")
+    speed = env.subst("$UPLOAD_SPEED")
+    esptool = env.subst("$PYTHONEXE") + " " + env.PioPlatform().get_package_dir("tool-esptoolpy") + "/esptool.py"
 
-    if not model_bin.exists():
-        print(f"[ESP_SR_M5Unified] skip: srmodels.bin not found at {model_bin}")
-        return
+    cmd = f'{esptool} --chip {chip} --port "{port}" --baud {speed} write_flash {hex(offset)} "{srmodels}"'
+    print("Flashing srmodels:", cmd)
+    ret = subprocess.call(cmd, shell=True)
+    if ret != 0:
+        raise RuntimeError(f"esptool write_flash failed with code {ret}")
 
-    offset = _read_model_offset(partition_csv)
-    if not offset:
-        return
-
-    upload_port = env_.subst("$UPLOAD_PORT")
-    if not upload_port:
-        upload_port = env_.AutodetectUploadPort()
-
-    upload_speed = env_.subst("$UPLOAD_SPEED") or "460800"
-    uploader = env_.subst("$UPLOADER")
-    pythonexe = env_.subst("$PYTHONEXE")
-    chip = env_.BoardConfig().get("build.mcu", "esp32")
-
-    cmd = (
-        f'"{pythonexe}" "{uploader}" --chip {chip} --port "{upload_port}" '
-        f"--baud {upload_speed} write_flash {offset} \"{model_bin}\""
-    )
-
-    print(f"[ESP_SR_M5Unified] flashing srmodels.bin to offset {offset}")
-    env_.Execute(cmd)
-
-
-env.AddPostAction("upload", _flash_srmodels)
+env.AddPostAction("upload", after_upload)
