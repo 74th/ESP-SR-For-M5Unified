@@ -14,6 +14,7 @@ M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して�
 
 - https://x.com/74th/status/2018644006021070944
 - https://x.com/74th/status/2020485095518302578
+- https://x.com/74th/status/2025868448669298742
 
 ## Arduino IDE で使う
 

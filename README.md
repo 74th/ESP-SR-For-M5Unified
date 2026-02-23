@@ -16,6 +16,7 @@ This library rewrites the ESP-SR library included in [esp32-arduino](https://git
 
 - https://x.com/74th/status/2018644006021070944
 - https://x.com/74th/status/2020485095518302578
+- https://x.com/74th/status/2025868448669298742
 
 ## Using with Arduino IDE
 
