@@ -1,8 +1,5 @@
 # ESP_SR_M5Unified
 
-> [!CAUTION]
-> This repository is still a work in progress.
-
 Japanese documentation: [`README_ja.md`](README_ja.md)
 
 This library passes audio captured by `M5Unified` (`M5.Mic.record(...)`) into ESP-SR, enabling wake-word detection and voice command recognition on ESP32 (S3/P4).

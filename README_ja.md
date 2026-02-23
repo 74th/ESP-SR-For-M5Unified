@@ -1,8 +1,5 @@
 # ESP_SR_M5Unified
 
-> [!CAUTION]
-> このリポジトリはまだ作業中です。
-
 M5Unified の `M5.Mic.record(...)` で取得した音声を ESP-SR に渡して、ESP32(S3/P4) でウェイクワード検出・音声コマンド認識を使うためのライブラリです。
 
 ## Arduino IDE で使う
