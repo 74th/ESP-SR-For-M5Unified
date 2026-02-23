@@ -94,10 +94,10 @@ void setup()
 
   auto cfg = M5.config();
 
-  // Atom Echo S3R
+  // Case: Atom Echo S3R
   // cfg.internal_mic = true;
 
-  // Atom S3R with Atomic ECHO BASE
+  // Case: Atom S3R with Atomic ECHO BASE
   // cfg.external_speaker.atomic_echo = 1;
 
   M5.begin(cfg);
