@@ -148,16 +148,14 @@ ESP-SR モデルは `srmodels.bin` を使用します。
 
 - `ESP SR 16M (3MB APP/7MB SPIFFS/2.9MB MODEL)`
 
-`arduino-esp32` (3.3.6) の実装では、概ね次の流れで `srmodels.bin` が書き込まれます。
+書き込み時は、次の手順で `srmodels.bin` をモデル領域へ書き込みます。
 
-1. ビルド時フックで、`ESP_SR` ライブラリが使われている場合に `srmodels.bin` をビルド出力へコピー
-   (`platform.txt` の `recipe.hooks.objcopy.postobjcopy.2.pattern`)
-2. 書き込み時、`Partition Scheme = esp_sr_16` の設定で `upload.extra_flags` に
-   `0xD10000 {build.path}/srmodels.bin` が追加され、モデル領域へ書き込み
-   (`boards.txt` の `*.menu.PartitionScheme.esp_sr_16.upload.extra_flags`)
-
-このリポジトリでは、Arduino IDE では上記 `ESP SR 16M` パーティションを前提として使用してください。
-もし `srmodels.bin` が見つからないエラーになる場合は、Arduino コア付属の `ESP_SR` ライブラリがビルド対象に入っているか確認してください。
+1. 一度「書き込み」を実行します。
+2. `No such file or directory: '/../sketches/.../srmodels.bin'` のようなエラーが出たら、
+  エラーメッセージに表示された場所へ `srmodels.bin` をコピーします。
+  - [examples/HiStackChanWakeUpWord/srmodels.bin](examples/HiStackChanWakeUpWord/srmodels.bin): HiStackChan の WakeUpWord のみ
+  - [examples/EnglishCommand/srmodels.bin](examples/EnglishCommand/srmodels.bin): HiStackChan の WakeUpWord + English Command
+3. 再度「書き込み」を実行すると、`srmodels.bin` がモデル領域へ書き込まれます。
 
 ## モデルライセンス
 

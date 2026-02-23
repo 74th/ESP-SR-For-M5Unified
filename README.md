@@ -157,17 +157,14 @@ When using this library in Arduino IDE, select this partition scheme:
 
 - `ESP SR 16M (3MB APP/7MB SPIFFS/2.9MB MODEL)`
 
-In `arduino-esp32` (3.3.6), `srmodels.bin` is handled roughly as follows:
+When uploading, use the following procedure to write `srmodels.bin` into the model partition:
 
-1. A build hook copies `srmodels.bin` into the build output when `ESP_SR` library is in use
-   (`platform.txt`: `recipe.hooks.objcopy.postobjcopy.2.pattern`)
-2. On upload, selecting `Partition Scheme = esp_sr_16` adds this upload flag:
-   `0xD10000 {build.path}/srmodels.bin`
-   and flashes it to the model region
-   (`boards.txt`: `*.menu.PartitionScheme.esp_sr_16.upload.extra_flags`)
-
-This repository assumes the `ESP SR 16M` partition scheme for Arduino IDE usage.
-If you get an error saying `srmodels.bin` is missing, confirm that Arduino core's `ESP_SR` library is included in the build.
+1. Run upload once.
+2. If you get an error like `No such file or directory: '/../sketches/.../srmodels.bin'`,
+   copy `srmodels.bin` into the location shown in the error message.
+   - [examples/HiStackChanWakeUpWord/srmodels.bin](examples/HiStackChanWakeUpWord/srmodels.bin): HiStackChan wake-word only
+   - [examples/EnglishCommand/srmodels.bin](examples/EnglishCommand/srmodels.bin): HiStackChan wake-word + English command
+3. Run upload again. `srmodels.bin` will be written to the model partition.
 
 ## Model license
 
